@@ -23,7 +23,7 @@ var (
 
 type sender struct {
 	ks      *keystore.KeyStore
-	account *keystore.Account
+	Account *keystore.Account
 }
 
 // Controller drives the transaction signing process
@@ -31,8 +31,8 @@ type Controller struct {
 	ExecutionError error
 	resultError    error
 	Client         *client.GrpcClient
-	tx             *core.Transaction
-	sender         sender
+	Tx             *core.Transaction
+	Sender         sender
 	Behavior       behavior
 	Result         *api.Return
 	Receipt        *core.TransactionInfo
@@ -57,11 +57,11 @@ func NewController(
 		ExecutionError: nil,
 		resultError:    nil,
 		Client:         client,
-		sender: sender{
+		Sender: sender{
 			ks:      senderKs,
-			account: senderAcct,
+			Account: senderAcct,
 		},
-		tx:       tx,
+		Tx:       tx,
 		Behavior: behavior{false, Software, 0},
 	}
 	for _, option := range options {
@@ -75,12 +75,12 @@ func (C *Controller) SignTxForSending() {
 		return
 	}
 	signedTransaction, err :=
-		C.sender.ks.SignTx(*C.sender.account, C.tx)
+		C.Sender.ks.SignTx(*C.Sender.Account, C.Tx)
 	if err != nil {
 		C.ExecutionError = err
 		return
 	}
-	C.tx = signedTransaction
+	C.Tx = signedTransaction
 }
 
 func (C *Controller) HardwareSignTxForSending() {
@@ -95,9 +95,9 @@ func (C *Controller) HardwareSignTxForSending() {
 	}
 
 	/* TODO: validate signature
-	if strings.Compare(signerAddr, address.ToBech32(C.sender.account.Address)) != 0 {
+	if strings.Compare(signerAddr, address.ToBech32(C.Sender.Account.Address)) != 0 {
 		C.ExecutionError = ErrBadTransactionParam
-		errorMsg := "signature verification failed : sender address doesn't match with ledger hardware address"
+		errorMsg := "signature verification failed : Sender address doesn't match with ledger hardware address"
 		C.transactionErrors = append(C.transactionErrors, &Error{
 			ErrMessage:           &errorMsg,
 			TimestampOfRejection: time.Now().Unix(),
@@ -106,7 +106,7 @@ func (C *Controller) HardwareSignTxForSending() {
 	}
 	*/
 	// add signature
-	C.tx.Signature = append(C.tx.Signature, signature)
+	C.Tx.Signature = append(C.Tx.Signature, signature)
 }
 
 // TransactionHash extract hash from TX
@@ -128,7 +128,7 @@ func (C *Controller) TxConfirmation() {
 	if C.Behavior.ConfirmationWaitTime > 0 {
 		txHash, err := C.TransactionHash()
 		if err != nil {
-			C.ExecutionError = fmt.Errorf("could not get tx hash")
+			C.ExecutionError = fmt.Errorf("could not get Tx hash")
 			return
 		}
 		//fmt.Printf("TX hash: %s\nWaiting for confirmation....", txHash)
@@ -180,14 +180,14 @@ func (C *Controller) ExecuteTransaction() error {
 
 // GetRawData Byes from Transaction
 func (C *Controller) GetRawData() ([]byte, error) {
-	return proto.Marshal(C.tx.GetRawData())
+	return proto.Marshal(C.Tx.GetRawData())
 }
 
 func (C *Controller) SendSignedTx() {
 	if C.ExecutionError != nil || C.Behavior.DryRun {
 		return
 	}
-	result, err := C.Client.Broadcast(C.tx)
+	result, err := C.Client.Broadcast(C.Tx)
 	if err != nil {
 		C.ExecutionError = err
 		return
