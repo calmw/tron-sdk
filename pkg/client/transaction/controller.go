@@ -121,7 +121,7 @@ func (C *Controller) TransactionHash() (string, error) {
 	return common.ToHex(hash), nil
 }
 
-func (C *Controller) txConfirmation() {
+func (C *Controller) TxConfirmation() {
 	if C.ExecutionError != nil || C.Behavior.DryRun {
 		return
 	}
@@ -173,8 +173,8 @@ func (C *Controller) ExecuteTransaction() error {
 	case Ledger:
 		C.HardwareSignTxForSending()
 	}
-	C.sendSignedTx()
-	C.txConfirmation()
+	C.SendSignedTx()
+	C.TxConfirmation()
 	return C.ExecutionError
 }
 
@@ -183,7 +183,7 @@ func (C *Controller) GetRawData() ([]byte, error) {
 	return proto.Marshal(C.tx.GetRawData())
 }
 
-func (C *Controller) sendSignedTx() {
+func (C *Controller) SendSignedTx() {
 	if C.ExecutionError != nil || C.Behavior.DryRun {
 		return
 	}
