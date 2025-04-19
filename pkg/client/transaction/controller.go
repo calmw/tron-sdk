@@ -22,7 +22,7 @@ var (
 )
 
 type sender struct {
-	ks      *keystore.KeyStore
+	Ks      *keystore.KeyStore
 	Account *keystore.Account
 }
 
@@ -58,7 +58,7 @@ func NewController(
 		resultError:    nil,
 		Client:         client,
 		Sender: sender{
-			ks:      senderKs,
+			Ks:      senderKs,
 			Account: senderAcct,
 		},
 		Tx:       tx,
@@ -75,7 +75,7 @@ func (C *Controller) SignTxForSending() {
 		return
 	}
 	signedTransaction, err :=
-		C.Sender.ks.SignTx(*C.Sender.Account, C.Tx)
+		C.Sender.Ks.SignTx(*C.Sender.Account, C.Tx)
 	if err != nil {
 		C.ExecutionError = err
 		return
