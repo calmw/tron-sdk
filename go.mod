@@ -11,7 +11,6 @@ require (
 	github.com/ethereum/go-ethereum v1.15.8
 	github.com/fatih/color v1.18.0
 	github.com/fatih/structs v1.1.0
-	github.com/fbsobreira/gotron-sdk v0.0.0-20250403083053-2943ce8c759b
 	github.com/karalabe/hid v1.0.1-0.20240306101548-573246063e52
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pborman/uuid v1.2.1
