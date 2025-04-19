@@ -28,9 +28,9 @@ type sender struct {
 
 // Controller drives the transaction signing process
 type Controller struct {
-	executionError error
+	ExecutionError error
 	resultError    error
-	client         *client.GrpcClient
+	Client         *client.GrpcClient
 	tx             *core.Transaction
 	sender         sender
 	Behavior       behavior
@@ -54,9 +54,9 @@ func NewController(
 ) *Controller {
 
 	ctrlr := &Controller{
-		executionError: nil,
+		ExecutionError: nil,
 		resultError:    nil,
-		client:         client,
+		Client:         client,
 		sender: sender{
 			ks:      senderKs,
 			account: senderAcct,
@@ -70,33 +70,33 @@ func NewController(
 	return ctrlr
 }
 
-func (C *Controller) signTxForSending() {
-	if C.executionError != nil {
+func (C *Controller) SignTxForSending() {
+	if C.ExecutionError != nil {
 		return
 	}
 	signedTransaction, err :=
 		C.sender.ks.SignTx(*C.sender.account, C.tx)
 	if err != nil {
-		C.executionError = err
+		C.ExecutionError = err
 		return
 	}
 	C.tx = signedTransaction
 }
 
-func (C *Controller) hardwareSignTxForSending() {
-	if C.executionError != nil {
+func (C *Controller) HardwareSignTxForSending() {
+	if C.ExecutionError != nil {
 		return
 	}
 	data, _ := C.GetRawData()
 	signature, err := ledger.SignTx(data)
 	if err != nil {
-		C.executionError = err
+		C.ExecutionError = err
 		return
 	}
 
 	/* TODO: validate signature
 	if strings.Compare(signerAddr, address.ToBech32(C.sender.account.Address)) != 0 {
-		C.executionError = ErrBadTransactionParam
+		C.ExecutionError = ErrBadTransactionParam
 		errorMsg := "signature verification failed : sender address doesn't match with ledger hardware address"
 		C.transactionErrors = append(C.transactionErrors, &Error{
 			ErrMessage:           &errorMsg,
@@ -121,21 +121,21 @@ func (C *Controller) TransactionHash() (string, error) {
 	return common.ToHex(hash), nil
 }
 
-func (C *Controller) txConfirmation() {
-	if C.executionError != nil || C.Behavior.DryRun {
+func (C *Controller) TxConfirmation() {
+	if C.ExecutionError != nil || C.Behavior.DryRun {
 		return
 	}
 	if C.Behavior.ConfirmationWaitTime > 0 {
 		txHash, err := C.TransactionHash()
 		if err != nil {
-			C.executionError = fmt.Errorf("could not get tx hash")
+			C.ExecutionError = fmt.Errorf("could not get tx hash")
 			return
 		}
 		//fmt.Printf("TX hash: %s\nWaiting for confirmation....", txHash)
 		start := int(C.Behavior.ConfirmationWaitTime)
 		for {
 			// GETTX by ID
-			if txi, err := C.client.GetTransactionInfoByID(txHash); err == nil {
+			if txi, err := C.Client.GetTransactionInfoByID(txHash); err == nil {
 				// check receipt
 				if txi.Result != 0 {
 					C.resultError = fmt.Errorf("%s", txi.ResMessage)
@@ -145,7 +145,7 @@ func (C *Controller) txConfirmation() {
 				return
 			}
 			if start < 0 {
-				C.executionError = fmt.Errorf("could not confirm transaction after %d seconds", C.Behavior.ConfirmationWaitTime)
+				C.ExecutionError = fmt.Errorf("could not confirm transaction after %d seconds", C.Behavior.ConfirmationWaitTime)
 				return
 			}
 			time.Sleep(time.Second)
@@ -165,17 +165,17 @@ func (C *Controller) GetResultError() error {
 
 // ExecuteTransaction is the single entrypoint to execute a plain transaction.
 // Each step in transaction creation, execution probably includes a mutation
-// Each becomes a no-op if executionError occurred in any previous step
+// Each becomes a no-op if ExecutionError occurred in any previous step
 func (C *Controller) ExecuteTransaction() error {
 	switch C.Behavior.SigningImpl {
 	case Software:
-		C.signTxForSending()
+		C.SignTxForSending()
 	case Ledger:
-		C.hardwareSignTxForSending()
+		C.HardwareSignTxForSending()
 	}
-	C.sendSignedTx()
-	C.txConfirmation()
-	return C.executionError
+	C.SendSignedTx()
+	C.TxConfirmation()
+	return C.ExecutionError
 }
 
 // GetRawData Byes from Transaction
@@ -183,17 +183,17 @@ func (C *Controller) GetRawData() ([]byte, error) {
 	return proto.Marshal(C.tx.GetRawData())
 }
 
-func (C *Controller) sendSignedTx() {
-	if C.executionError != nil || C.Behavior.DryRun {
+func (C *Controller) SendSignedTx() {
+	if C.ExecutionError != nil || C.Behavior.DryRun {
 		return
 	}
-	result, err := C.client.Broadcast(C.tx)
+	result, err := C.Client.Broadcast(C.tx)
 	if err != nil {
-		C.executionError = err
+		C.ExecutionError = err
 		return
 	}
 	if result.Code != 0 {
-		C.executionError = fmt.Errorf("bad transaction: %v", string(result.GetMessage()))
+		C.ExecutionError = fmt.Errorf("bad transaction: %v", string(result.GetMessage()))
 	}
 	C.Result = result
 }
