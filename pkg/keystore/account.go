@@ -9,7 +9,7 @@ import (
 	"github.com/calmw/tron-sdk/pkg/common"
 	"github.com/calmw/tron-sdk/pkg/proto/core"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	secp256k "github.com/ethereum/go-ethereum/crypto/secp256k1"
 )
 
 type DerivationPath []uint32
@@ -181,7 +181,7 @@ func RecoverPubkey(hash []byte, signature []byte) (address.Address, error) {
 		signature[64] -= 27
 	}
 
-	sigPublicKey, err := secp256k1.RecoverPubkey(hash, signature)
+	sigPublicKey, err := secp256k.RecoverPubkey(hash, signature)
 	if err != nil {
 		return nil, err
 	}
