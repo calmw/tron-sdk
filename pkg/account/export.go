@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/calmw/tron-sdk/pkg/keystore"
-	"github.com/calmw/tron-sdk/pkg/store"
+	"github.com/fbsobreira/gotron-sdk/pkg/keystore"
+	"github.com/fbsobreira/gotron-sdk/pkg/store"
 )
 
 // ExportPrivateKey from account

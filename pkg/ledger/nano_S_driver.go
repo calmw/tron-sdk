@@ -238,7 +238,7 @@ func OpenNanoS() (*NanoS, error) {
 	)
 
 	// search for Nano S
-	devices, err := hid.Enumerate(ledgerVendorID, ledgerNanoSProductID)
+	devices := hid.Enumerate(ledgerVendorID, ledgerNanoSProductID)
 	if len(devices) == 0 {
 		return nil, errors.New("Nano S not detected")
 	} else if len(devices) > 1 {

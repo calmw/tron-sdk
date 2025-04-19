@@ -7,11 +7,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/calmw/tron-sdk/pkg/address"
-	"github.com/calmw/tron-sdk/pkg/client/transaction"
-	"github.com/calmw/tron-sdk/pkg/common"
-	"github.com/calmw/tron-sdk/pkg/keystore"
-	"github.com/calmw/tron-sdk/pkg/store"
+	"github.com/fbsobreira/gotron-sdk/pkg/address"
+	"github.com/fbsobreira/gotron-sdk/pkg/client/transaction"
+	"github.com/fbsobreira/gotron-sdk/pkg/common"
+	"github.com/fbsobreira/gotron-sdk/pkg/keystore"
+	"github.com/fbsobreira/gotron-sdk/pkg/store"
 	"github.com/spf13/cobra"
 )
 

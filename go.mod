@@ -6,11 +6,12 @@ toolchain go1.24.2
 
 require (
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
-	github.com/btcsuite/btcd v0.22.0-beta
+	github.com/btcsuite/btcd v0.22.3
 	github.com/deckarep/golang-set v1.8.0
 	github.com/ethereum/go-ethereum v1.15.8
 	github.com/fatih/color v1.18.0
 	github.com/fatih/structs v1.1.0
+	github.com/fbsobreira/gotron-sdk v0.0.0-20250403083053-2943ce8c759b
 	github.com/karalabe/hid v1.0.1-0.20240306101548-573246063e52
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/pborman/uuid v1.2.1

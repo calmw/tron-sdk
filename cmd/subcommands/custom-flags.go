@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/calmw/tron-sdk/pkg/address"
+	"github.com/fbsobreira/gotron-sdk/pkg/address"
 	"github.com/pkg/errors"
 )
 
